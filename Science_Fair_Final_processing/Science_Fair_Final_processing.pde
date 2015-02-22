@@ -15,14 +15,15 @@ Arduino arduino;
 STT stt;
 String voiceinput;
 String val;
-String xaccel;
-String xtime;
-String xsavedtime;
+String xaccel, xtime, xsavedtime;
+String yaccel, ytime, ysavedtime;
+String zaccel, ztime, zsavedtime;
+float xoffset, yoffset;
 
 int xpos;
 int ypos;
 void setup() {
-size(200,200);
+size(500,500);
 background(255);
 textSize(20);
 fill(0);
@@ -33,6 +34,12 @@ val=" ";
 xaccel="0";
 xtime="0";
 xsavedtime="0";
+yaccel="0";
+ytime="0";
+ysavedtime="0";
+zaccel="0";
+ztime="0";
+zsavedtime="0";
 xpos=displayWidth/2;
 ypos=displayHeight/2;
 String portName = Serial.list()[0];
@@ -72,33 +79,51 @@ background(255);
   {
     val = myPort.readString();
   }
-if((val.charAt(0)=='X' || val.charAt(0) == 'Y' || val.charAt(0) == 'Z')&& val.indexOf(" ")>-1){    
+if(val.charAt(0)=='X' && val.indexOf('Y')>-1 && val.indexOf('Z')> -1&& val.indexOf(" ")>-1){    
 
-if(val.charAt(0)=='X'){
   String[] accandtime = val.split(" ");
 xsavedtime = xtime;
-if(accandtime.length==3){
+ysavedtime = ytime;
+
+if(accandtime.length>8){
 xaccel= accandtime[1];
 xtime = accandtime[2];
+yaccel=accandtime[4];
+ytime=accandtime[5];
 }
 
 
-text(xaccel,20,20);
-text(xtime,20,40);
-text(xsavedtime,20,60);
+
+text("xaccel "+ xaccel,20,20);
+text("x time " +xtime,20,40);
+text("x savedtime " + xsavedtime,20,60);
+text("yaccel "+ yaccel,20,80);
+text("y time " +ytime,20,100);
+text("y savedtime " + ysavedtime,20,120);
 
 double t1 = Double.parseDouble(xtime);
 double t2 = Double.parseDouble(xsavedtime);
-double deltat = (t1-t2) * 0.001;
-float acc = Float.parseFloat(xaccel);
+double xdeltat = (t1-t2) * 0.001;
+float xacc = Float.parseFloat(xaccel);
 
-double output = getDistance(acc,deltat)*1000;
-println(output);
+double t3 = Double.parseDouble(ytime);
+double t4 = Double.parseDouble(ysavedtime);
+double ydeltat = (t3-t4) * 0.001;
+float yacc = Float.parseFloat(yaccel);
 
-xpos+=(int)output;
+double xoutput = getDistance(xacc,xdeltat)*1000;
+text("Xoutput " + xoutput,200,20);
+if(xoutput>1){
+xpos+=(int)xoutput;
+}
+
+double youtput = getDistance(yacc,ydeltat)*1000;
+text("Youtput " + youtput,200,80);
+if(youtput>1){
+ypos+=(int)youtput;
+}
 rob.mouseMove(xpos,ypos);
 delay(100);
-}
 
 
 }
@@ -120,13 +145,41 @@ double getDistance(float acclerationvalue, double time){
 */
 
 public void callibrate(){
-xpos=displayWidth/2;
-ypos=displayHeight/2;
+  String a,b;
+  a="";b="";
+for(int i=0;i<1000;i++){
+while(myPort.available()>0)
+  {
+    val = myPort.readString();
+  }
+  
+  if(val.charAt(0)=='X' && val.indexOf('Y')>-1 && val.indexOf('Z')> -1&& val.indexOf(" ")>-1){    
+
+  String[] accandtime = val.split(" ");
+
+
+if(accandtime.length>8){
+a= accandtime[1]; 
+b= accandtime[4];
+
 }
 
-public void keyPressed() {
+xoffset=xoffset+Float.parseFloat(a);
+yoffset=yoffset+Float.parseFloat(b);
+}
+}
+xoffset=xoffset/1000;
+yoffset=yoffset/1000;
+println(xoffset);
+println(yoffset);
+}
+
+public void keyPressed(){
 callibrate();
 }
+
+  
+
 
 
 

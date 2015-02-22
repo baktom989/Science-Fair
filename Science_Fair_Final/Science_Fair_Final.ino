@@ -6,14 +6,19 @@ int8_t z_data;
 byte range=0x00;
 float divi=16;
 float x,y,z;
-String output;
+float xoutput, youtput, zoutput;
+String Xoutput;
+String Youtput;
+String Zoutput;
 
 int width;
 int height;
 double xcount;
 int counter;
 void setup() 
-{ 
+{ xoutput=0;
+  youtput=0;
+  zoutput=0;
   Serial.begin(115200); 
   Wire.begin(); 
   Wire.beginTransmission(0x0A); // address of the accelerometer 
@@ -25,7 +30,9 @@ void setup()
   Wire.write(0x05); //can be set at"0x05""0x04"......"0x01""0x00", refer to Datashhet on wiki
   Wire.endTransmission();
   
-  output="";
+  Xoutput="";
+  Youtput="";
+  Zoutput="";
   counter=0;
   xcount=0;
 } 
@@ -68,12 +75,16 @@ void AccelerometerInit()
    x=(float)x_data/divi; 
    y=(float)y_data/divi;
    z=(float)z_data/divi;
+
    
-    output = "X= " + (String)x + "  Y= " + (String)y + "  Z= " + (String)z;
-Serial.print(x);
-Serial.print(" ");
-Serial.println(millis());
-  
+Xoutput = "X " + (String)x+" "+millis();
+Youtput = "Y " + (String)y+" "+millis();
+Zoutput = "Z " + (String)z+" "+millis();
+Serial.println(Xoutput + " " + Youtput + " " +  Zoutput + " ");
+
+
+
+ 
 } 
    
 void loop() 
@@ -88,6 +99,10 @@ void loop()
   }
 
   AccelerometerInit();
+
+
+
+
   delay(100);
 } 
 
