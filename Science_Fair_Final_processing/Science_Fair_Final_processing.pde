@@ -1,5 +1,4 @@
 import processing.serial.*;
-import cc.arduino.*;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
@@ -11,7 +10,6 @@ import ddf.minim.*;
 //Global Variables
 Robot rob;
 Serial myPort;
-Arduino arduino;
 STT stt;
 String voiceinput;
 String val;
@@ -42,7 +40,8 @@ ztime="0";
 zsavedtime="0";
 xpos=displayWidth/2;
 ypos=displayHeight/2;
-String portName = Serial.list()[0];
+println(Serial.list());
+String portName = Serial.list()[4];
 myPort = new Serial(this, portName, 115200);
 
 //voice recognition initialization 
@@ -127,6 +126,7 @@ delay(100);
 
 
 }
+delay(100);
 }  
 
 double getDistance(float acclerationvalue, double time){
@@ -175,7 +175,13 @@ println(yoffset);
 }
 
 public void keyPressed(){
+  if(key=='k'){
+ xpos=displayWidth/2;
+ ypos=displayHeight/2;
+  }
+  else{
 callibrate();
+}
 }
 
   
