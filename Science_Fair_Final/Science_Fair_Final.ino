@@ -15,6 +15,7 @@ float xoffset, yoffset, zoffset;
 
 int width;
 int height;
+int cnt;
 double xcount;
 int counter;
 float xtime;
@@ -40,6 +41,7 @@ void setup()
   counter=0;
   xcount=0;
   xtime=0;
+  cnt=0;
   
   callibrate();
  
@@ -88,40 +90,33 @@ void AccelerometerInit()
 x=x-xoffset;
 y=y-yoffset;
 z=z-zoffset;
-   Serial.print("X ");
-   Serial.println(x);
-   Serial.print("Y ");
-   Serial.println(y);
-   Serial.print("Z ");
-   Serial.println(z);
-   
-    double xoutput = getDistance(x,(millis()-xtime)*0.01);
-   double youtput = getDistance(y,(millis()-xtime)*0.01);
-   xtime=millis();
+
+      
+    double xoutput = getDistance(x,(millis()-xtime)*0.05);
+   double youtput = getDistance(y,(millis()-xtime)*0.05);
+   xtime=millis();  
 
 
-if(z>-0.05 && z<0.05)
+if(z>-0.1 && z<0.1 && cnt>0)
  {
-   
-   if(xoutput>1 || xoutput<-1)
+   if((xoutput>1 || xoutput<-1) && (youtput>1 || youtput<-1)){
+   Serial.println("Xout " + (String)xoutput + " Yout " + (String)youtput);
+   }
+   else if(xoutput>1 || xoutput<-1)
    {
-    Serial.println("X " + (String)xoutput);
+    Serial.println("Xout " + (String)xoutput);
    }
    
-   if(youtput>1 || youtput<-1)
+   else if(youtput>1 || youtput<-1)
    {
-    Serial.println("Y " + (String)youtput);
+    Serial.println("Yout " + (String)youtput);
    }  
-   Serial.print("xoutput ");
-   Serial.println(xoutput);
-   Serial.print("youtput ");
-   Serial.println(youtput);
+   else{Serial.println("stationary");}
  
-  
  }
+ else{Serial.println("stationary");}
 
-
- 
+ cnt=1; 
 } 
    
 void callibrate(){
@@ -168,14 +163,14 @@ xoffset=xoffset+x;
 yoffset=yoffset+y;
 zoffset=zoffset+z;
 count++;  
-
 }
-xoffset=xoffset/1000;
-yoffset=yoffset/1000;
-zoffset=zoffset/1000;
+xoffset=xoffset/count;
+yoffset=yoffset/count;
+zoffset=zoffset/count;
 
 String hey = (String)xoffset + " " +(String) yoffset + " " +(String)zoffset;
 Serial.println(hey);
+cnt=0;
    
 }   
 

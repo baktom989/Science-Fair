@@ -78,8 +78,42 @@ while(myPort.available()>0)
 {
  val = myPort.readString();
  println(val);
+ if(val.indexOf("stationary")>-1){
+xacc=0;
+yacc=0;
+}
+} //while loop ends here
+
+if(val.indexOf("stationary")==-1){
+ String[] out = val.split(" ");
+if(out.length>1)
+ {
+  if(out.length>3)
+   {
+    xacc=Float.parseFloat(out[1]);
+    yacc=Float.parseFloat(out[3]); 
+   }
+else if(out.length==2)
+  {
+    if(out[0].equals("Xout"))
+    {xacc=Float.parseFloat(out[1]);}
+    
+    if(out[0].equals("Yout"))
+    {yacc=Float.parseFloat(out[1]);}
+  }
+
+}
 }
 
+if(xacc!=0){
+xpos+=xacc*10;
+ypos+=yacc*10;
+} 
+
+
+text("xacc "+xacc,20,20);
+text("yacc "+yacc,20,40);
+rob.mouseMove(xpos,ypos);
 }  
 
 double getDistance(float acclerationvalue, double time){
