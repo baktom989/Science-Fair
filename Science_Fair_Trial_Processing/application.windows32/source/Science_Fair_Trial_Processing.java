@@ -1,11 +1,36 @@
-import processing.serial.*;
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.util.Scanner;
-import com.getflourish.stt.*;
-import ddf.minim.*;
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import processing.serial.*; 
+import java.awt.AWTException; 
+import java.awt.Robot; 
+import java.awt.event.InputEvent; 
+import java.awt.event.KeyEvent; 
+import java.util.Scanner; 
+import com.getflourish.stt.*; 
+import ddf.minim.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class Science_Fair_Trial_Processing extends PApplet {
+
+
+
+
+
+
+
+
+
 //Global Variables
 Robot rob;
 Serial myPort;
@@ -16,12 +41,13 @@ String xaccel, xtime, xsavedtime;
 String yaccel, ytime, ysavedtime;
 String zaccel, ztime, zsavedtime;
 float xacc, yacc, zacc;
+int multiplier;
 int xpos;
 int ypos;
 int count;
 
-void setup() {
-size(700,500);
+public void setup() {
+size(120,50);
 background(255);
 textSize(20);
 fill(0);
@@ -39,6 +65,7 @@ zaccel="0";
 ztime="0";
 zsavedtime="0";
 count=1;
+multiplier=10;
 xpos=displayWidth/2;
 ypos=displayHeight/2;
 
@@ -69,7 +96,7 @@ callibrate();
 
 }
 
-void draw() {
+public void draw() {
 //resets the screen to white every time
 background(255);
 
@@ -106,10 +133,24 @@ else if(out.length==2)
 }
 
 if(xacc!=0){
-xpos+=xacc*10;
+
+  xpos+=xacc*multiplier;
+  if(xpos<0){
+  xpos=0;
+  }
+  else if(xpos>displayWidth){
+  xpos=displayWidth;
+  }
 } 
 if(yacc!=0){
-ypos-=yacc*10;
+  
+  ypos-=yacc*multiplier;
+  if(ypos<0){
+  ypos=0;
+  }
+  else if(ypos>displayHeight){
+  ypos=displayHeight;
+  }
 }
 
 text("xacc "+xacc,20,20);
@@ -117,10 +158,6 @@ text("yacc "+yacc,20,40);
 rob.mouseMove(xpos,ypos);
 }  
 
-double getDistance(float acclerationvalue, double time){
-  double distance = 0.5*acclerationvalue*(time*time);
-  return distance;
-}
 
 /*void transcribe (String word, float confidence) 
 {
@@ -141,7 +178,19 @@ public void keyPressed(){
  xpos=displayWidth/2;
  ypos=displayHeight/2;
   }
- else{
+  else if(key=='='){
+  multiplier+=0.5f;
+  }
+  else if(key=='-'){
+  multiplier-=0.5f;
+  }
+  else if(key=='g'){
+  rob.mousePress(InputEvent.BUTTON1_MASK);
+  delay(100);
+  rob.mouseRelease(InputEvent.BUTTON1_MASK);
+  delay(100);
+  }
+ else {
 callibrate();
 }
 }
@@ -151,3 +200,12 @@ callibrate();
 
 
 
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "Science_Fair_Trial_Processing" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
+}

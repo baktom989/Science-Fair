@@ -16,12 +16,13 @@ String xaccel, xtime, xsavedtime;
 String yaccel, ytime, ysavedtime;
 String zaccel, ztime, zsavedtime;
 float xacc, yacc, zacc;
+int multiplier;
 int xpos;
 int ypos;
 int count;
 
 void setup() {
-size(700,500);
+size(120,50);
 background(255);
 textSize(20);
 fill(0);
@@ -39,6 +40,7 @@ zaccel="0";
 ztime="0";
 zsavedtime="0";
 count=1;
+multiplier=10;
 xpos=displayWidth/2;
 ypos=displayHeight/2;
 
@@ -106,10 +108,24 @@ else if(out.length==2)
 }
 
 if(xacc!=0){
-xpos+=xacc*10;
+
+  xpos+=xacc*multiplier;
+  if(xpos<0){
+  xpos=0;
+  }
+  else if(xpos>displayWidth){
+  xpos=displayWidth;
+  }
 } 
 if(yacc!=0){
-ypos-=yacc*10;
+  
+  ypos-=yacc*multiplier;
+  if(ypos<0){
+  ypos=0;
+  }
+  else if(ypos>displayHeight){
+  ypos=displayHeight;
+  }
 }
 
 text("xacc "+xacc,20,20);
@@ -117,10 +133,6 @@ text("yacc "+yacc,20,40);
 rob.mouseMove(xpos,ypos);
 }  
 
-double getDistance(float acclerationvalue, double time){
-  double distance = 0.5*acclerationvalue*(time*time);
-  return distance;
-}
 
 /*void transcribe (String word, float confidence) 
 {
@@ -141,7 +153,19 @@ public void keyPressed(){
  xpos=displayWidth/2;
  ypos=displayHeight/2;
   }
- else{
+  else if(key=='='){
+  multiplier+=0.5;
+  }
+  else if(key=='-'){
+  multiplier-=0.5;
+  }
+  else if(key=='g'){
+  rob.mousePress(InputEvent.BUTTON1_MASK);
+  delay(100);
+  rob.mouseRelease(InputEvent.BUTTON1_MASK);
+  delay(100);
+  }
+ else {
 callibrate();
 }
 }
